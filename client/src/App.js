@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styling/App.css";
 import "./styling/nav.css";
 import "./styling/footer.css";
@@ -10,7 +10,6 @@ import "./styling/contact.css";
 import "./styling/hero.css";
 import "./styling/featured.css";
 
-
 import About from "./pages/about";
 import Account from "./pages/account";
 import Cart from "./pages/cart";
@@ -18,32 +17,35 @@ import Contact from "./pages/contact";
 import Shopping from "./pages/shopping";
 import Home from "./pages/home";
 
-
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import { NavBar } from "./components/index.js";
-import { Footer } from "./components/index.js";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { NavBar, Footer } from "./components";
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState("");
+
   return (
-    <>
-      <BrowserRouter>
-        <div className="main">
-          <NavBar />
-          <Footer />
-        </div>
+    <Router>
+      <NavBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <div className="main-content">
         <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/shopping"
+            element={<Shopping searchTerm={searchTerm} />}
+          />
           <Route path="/about" element={<About />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<Cart />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/shopping" element={<Shopping />} />
+          <Route
+            path="/cart"
+            element={<Cart />}
+          />
+          <Route path="/account" element={<Account />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </div>
+
+      <Footer />
+    </Router>
   );
 }
 

@@ -4,8 +4,10 @@ import ContactForm from "../components/contactForm"
 const Contact = () => {
   return (
     <div id="contact-page">
-      <ContactForm />
-      {/* TODO: Wire this form to the Lesson 9 backend once it is running. */}
+      <div className="contact-overlay">
+        <h1 className="contact-title">Get in Touch </h1>
+        <ContactForm />
+      </div>
     </div>
   );
 };

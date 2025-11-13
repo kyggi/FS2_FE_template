@@ -1,143 +1,94 @@
-import React, { useState } from "react";
-import NavBar from "../components/nav";
-import productImg from "../images/productImg.png";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Product from "../components/product";
 
-const PAGE_PRODUCTS = "products";
-const PAGE_CART = "cart";
+const API = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
-const Shopping = () => {
+const Shopping = ({ searchTerm }) => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [cartList, setCartList] = useState([]);
-  const [page, setPage] = useState(PAGE_PRODUCTS);
+  const navigate = useNavigate();
 
-  const [products] = useState([
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-    {
-      image: productImg,
-      name: "Product Title",
-      description: "A description of the product",
-      price: "Price"
-    },
-  ]);
+  // === Fetch products ===
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get(`${API}/api/ecommerce/products`);
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Unable to load products. Please try again later.");
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-  const addToCart = (product) => {
-    setCartList([...cartList, product]);
+  // === Filter products by search ===
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(
+        products.filter((p) =>
+          p.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }, [products, searchTerm]);
+
+  // === Fetch cart ===
+  const fetchCart = async () => {
+    try {
+      const { data } = await axios.get(`${API}/api/ecommerce/cart`);
+      setCartList(data);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
   };
 
-  const navigateTo = (nextPage) => {
-    setPage(nextPage);
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // === Add to cart ===
+  const addToCart = async (product) => {
+    try {
+      await axios.post(`${API}/api/ecommerce/cart`, { product });
+      await fetchCart(); // refresh live count
+    } catch (err) {
+      console.error("Unable to add to cart:", err);
+    }
   };
 
-  const renderProducts = () => (
-    <>
-      <header id="shopping-head">
-        <button onClick={() => navigateTo(PAGE_CART)} id="goToCart">
-          Go to Cart ({cartList.length})
-        </button>
-      </header>
-      <div id="shopping">
-        {products.map((product, idx) => (
-          <div className="card" key={idx}>
-            <div id="product">
-              <img src={product.image} alt="" />
-              <h2> {product.name} </h2>
-              <h3> {product.description} </h3>
-              <h3> {product.price} </h3>
-              <button onClick={() => addToCart(product)}> Add to Cart </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-
-  const renderCart = () => (
-    <>
-      <div id="cart-container">
-        <button onClick={() => navigateTo(PAGE_PRODUCTS)} id="products-btn">
-          Back to Products
-        </button>
-
-        <h1 id="cart-title"> Cart </h1>
-
-        {cartList.map((product, idx) => (
-          <div className="card card-container" key={idx}>
-            <div id="product">
-              <img src={product.image} alt="" />
-              <h2> {product.name} </h2>
-              <h3> {product.description} </h3>
-              <h3> {product.price} </h3>
-            </div>
-          </div>
-        ))}
-        <button id="checkout-btn">Checkout</button>
-      </div>
-    </>
-  );
+  // === Render products ===
+  const renderProducts = () =>
+    filteredProducts.map((product) => (
+      <Product key={product.id} product={product} addToCart={addToCart} />
+    ));
 
   return (
     <div className="main">
-      {renderProducts()}
-      {page === PAGE_CART && renderCart()}
-      <NavBar length={cartList.length} />
+      <header id="shopping-head">
+        <button onClick={() => navigate("/cart")} id="goToCart">
+          Go to Cart ({cartList.length})
+        </button>
+      </header>
+
+      <div id="shopping">
+        {productsLoading && <p>Loading products...</p>}
+        {error && <p>{error}</p>}
+        {!productsLoading && !error && filteredProducts.length === 0 && (
+          <p>No products available at the moment.</p>
+        )}
+        {!productsLoading && !error && filteredProducts.length > 0 && renderProducts()}
+      </div>
     </div>
   );
 };

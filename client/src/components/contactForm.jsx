@@ -2,79 +2,101 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const ContactForm = () => {
-  // Lesson 9 TODO: Step 1 – Collect the form data in component state so it can be sent to your server.
+  // 🧩 Form state
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    subject: "",
+    First_name: "",
+    Last_name: "",
+    Email: "",
+    message: "",
   });
 
-  // Lesson 9 TODO: Step 2 – Send this data to your Express endpoint once it's implemented.
-  // Lesson 9 TODO: Step 3 – Handle both success and failure responses from the server.
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    axios
-      // Reminder: set REACT_APP_API_BASE_URL in your .env once your Express server is up.
-      .post(`${process.env.REACT_APP_API_BASE_URL}/submit-form`, formData)
-      .then((response) => {
-        console.log(response.data);
-        // TODO: replace this console.log with user feedback once the POST route is working.
-      })
-      .catch((error) => {
-        console.log(error);
-        // TODO: surface an error message to the user once the POST route is working.
-      });
-  };
-
+  // 🧩 Handle input changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
+  // 🧩 Submit handler
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL || "http://localhost:3001"}/submit-form`,
+        formData
+      );
+
+      console.log("✅ Form submitted:", response.data);
+      alert("Form submitted successfully!");
+
+      // Reset form after submit
+      setFormData({
+        First_name: "",
+        Last_name: "",
+        Email: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("❌ Error submitting form:", error);
+      alert("Failed to submit form. Please try again later.");
+    }
+  };
+
+  // 🧩 Render form UI
   return (
     <div id="contact">
       <form onSubmit={handleSubmit}>
+        {/* First Name */}
         <label htmlFor="fname">First Name</label>
         <input
           type="text"
-          className="name"
           id="fname"
-          name="firstname"
-          placeholder="Your name.."
-          value={formData.firstname}
+          name="First_name"
+          placeholder="Your name..."
+          value={formData.First_name}
           onChange={handleInputChange}
+          required
         />
 
+        {/* Last Name */}
         <label htmlFor="lname">Last Name</label>
         <input
           type="text"
-          className="name"
           id="lname"
-          name="lastname"
-          placeholder="Your last name.."
-          value={formData.lastname}
+          name="Last_name"
+          placeholder="Your last name..."
+          value={formData.Last_name}
           onChange={handleInputChange}
+          required
         />
 
+        {/* Email */}
         <label htmlFor="email">Email Address</label>
-        <textarea
+        <input
+          type="email"
           id="email"
-          name="email"
+          name="Email"
           placeholder="Please leave an email address where we can reach you"
-          value={formData.email}
+          value={formData.Email}
           onChange={handleInputChange}
+          required
         />
 
-        <label htmlFor="subject">Subject</label>
+        {/* Message */}
+        <label htmlFor="message">Message</label>
         <textarea
-          id="subject"
-          name="subject"
-          placeholder="Write something.."
-          value={formData.subject}
+          id="message"
+          name="message"
+          placeholder="Write something..."
+          value={formData.message}
           onChange={handleInputChange}
+          required
         />
 
+        {/* Submit Button */}
         <button type="submit">Submit</button>
       </form>
     </div>

@@ -1,43 +1,131 @@
-#contact-page {
-  background: url("https://images.unsplash.com/photo-1434715961933-4cbf3d79230f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1744&q=80");
-  background-repeat: no-repeat;
-  height: 140vh;
-  width: 100vw;
+
+body {
+  background: url("https://www.windowslatest.com/wp-content/uploads/2024/10/Windows-XP-4K-modified-scaled.jpg")
+    no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #002b45;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* overlay*/
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.35);
+  z-index: 0;
 }
 
 #contact {
-  position: absolute;
-  top: 80px;
-  margin-top: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
-.name,
-select,
-textarea {
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 16px;
+  max-width: 520px;
+  padding: 2rem 2.5rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(230, 250, 255, 0.75) 100%);
+  box-shadow: 0 12px 30px rgba(0, 85, 128, 0.25),
+              inset 0 1px 3px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+form:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0, 85, 128, 0.35),
+              inset 0 2px 5px rgba(255, 255, 255, 0.6);
+}
+
+form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+form label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #003a60;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+form input,
+form textarea {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1px solid rgba(160, 204, 228, 0.8);
+  background: linear-gradient(180deg, #ffffff 0%, #e8f8ff 100%);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(255, 255, 255, 0.4);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #57c3ff;
+  box-shadow: 0 0 10px rgba(120, 210, 255, 0.6),
+              inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(180deg, #ffffff 0%, #f0fbff 100%);
+}
+
+form textarea {
+  min-height: 110px;
   resize: vertical;
 }
 
-input[type="submit"] {
-  background-color: rgb(0, 92, 122);
+form button {
+  align-self: center;
+  background: linear-gradient(180deg, #4fc3f7 0%, #29b6f6 45%, #03a9f4 100%);
   color: white;
-  padding: 12px 20px;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 14px;
+  padding: 10px 28px;
+  font-size: 1rem;
   cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 80, 120, 0.25);
+  transition: background 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
 }
 
-input[type="submit"]:hover {
-  background-color: #000b70;
+form button:hover {
+  background: linear-gradient(180deg, #66d2ff 0%, #33bbff 60%, #009ee3 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 80, 120, 0.35);
+}
+
+form button:active {
+  transform: translateY(1px);
+  background: linear-gradient(180deg, #33bbff 0%, #009ee3 100%);
+  box-shadow: 0 2px 8px rgba(0, 80, 120, 0.3);
 }
